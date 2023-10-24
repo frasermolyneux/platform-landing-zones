@@ -1,0 +1,37 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: environment
+  type: string
+- name: environmentName
+  type: string
+
+stages:
+- stage: deploy_${{ parameters.environmentName }}
+  jobs:
+  - deployment: deploy_${{ parameters.environmentName }}_platform_bicep
+    environment: ${{ parameters.environment }}
+
+    workspace:
+      clean: all
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+
+            - task: AzureCLI@2
+              displayName: deploy_${{ parameters.environmentName }}_platform_bicep
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+
+                  az deployment tenant create `
+                    --name "alz-platform-$($config.parameters.parEnvironment.value)-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" `
+                    --template-file bicep/platform.bicep `
+                    --location $config.parameters.parLocation.value `
+                    --parameters @params/platform.${{ parameters.environmentName }}.json

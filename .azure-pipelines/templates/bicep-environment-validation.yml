@@ -1,0 +1,54 @@
+parameters:
+- name: dependsOn
+  type: object
+  default: []
+- name: azureSubscription
+  type: string
+- name: environment
+  type: string
+- name: environmentName
+  type: string
+
+jobs:
+- deployment: validate_bicep_against_${{ parameters.environmentName }}_environment
+  dependsOn: ${{ parameters.dependsOn }}
+  environment: ${{ parameters.environment }}
+
+  workspace:
+    clean: all
+
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - checkout: self
+
+          - task: AzureCLI@2
+            name: RunPreflightValidation
+            inputs:
+              azureSubscription: ${{ parameters.azureSubscription }}
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+
+                az deployment tenant validate `
+                  --name "alz-platform-$($config.parameters.parEnvironment.value)-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" `
+                  --template-file bicep/platform.bicep `
+                  --location $config.parameters.parLocation.value `
+                  --parameters @params/platform.${{ parameters.environmentName }}.json
+
+          - task: AzureCLI@2
+            name: RunWhatIfDeploy
+            inputs:
+              azureSubscription: ${{ parameters.azureSubscription }}
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+                
+                az deployment tenant what-if `
+                  --name "alz-platform-$($config.parameters.parEnvironment.value)-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" `
+                  --template-file bicep/platform.bicep `
+                  --location $config.parameters.parLocation.value `
+                  --parameters @params/platform.${{ parameters.environmentName }}.json
