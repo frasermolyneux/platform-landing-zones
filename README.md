@@ -1,9 +1,10 @@
 # Platform Landing Zones
 
-| Stage | Status |
-| --- | --- |
-| Build | [![Build Status](https://dev.azure.com/frasermolyneux/Personal-Public/_apis/build/status%2Fplatform-landing-zones.OnePipeline?repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main&stageName=build)](https://dev.azure.com/frasermolyneux/Personal-Public/_build/latest?definitionId=172&repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main) |
-| Production | [![Build Status](https://dev.azure.com/frasermolyneux/Personal-Public/_apis/build/status%2Fplatform-landing-zones.OnePipeline?repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main&stageName=deploy_prd)](https://dev.azure.com/frasermolyneux/Personal-Public/_build/latest?definitionId=172&repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main) |
+| Stage                  | Status                                                                                                                                                                                                                                                                                                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DevOps Secure Scanning | [![Build Status](https://dev.azure.com/frasermolyneux/Personal-Public/_apis/build/status%2Fplatform-landing-zones.DevOpsSecureScanning?branchName=main)](https://dev.azure.com/frasermolyneux/Personal-Public/_build/latest?definitionId=208&branchName=main)                                                                                                               |
+| Build                  | [![Build Status](https://dev.azure.com/frasermolyneux/Personal-Public/_apis/build/status%2Fplatform-landing-zones.OnePipeline?repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main&stageName=build)](https://dev.azure.com/frasermolyneux/Personal-Public/_build/latest?definitionId=172&repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main)      |
+| Release to Production  | [![Build Status](https://dev.azure.com/frasermolyneux/Personal-Public/_apis/build/status%2Fplatform-landing-zones.OnePipeline?repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main&stageName=deploy_prd)](https://dev.azure.com/frasermolyneux/Personal-Public/_build/latest?definitionId=172&repoName=frasermolyneux%2Fplatform-landing-zones&branchName=main) |
 
 ---
 
