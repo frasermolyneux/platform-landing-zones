@@ -77,7 +77,7 @@ module logging 'logging/logging.bicep' = {
     parAutomationAccountLocation: parLocation
     parTags: parTags
     parTelemetryOptOut: true
-    parLogAnalyticsWorkspaceSolutions: [ 'AzureActivity' ]
+    parLogAnalyticsWorkspaceSolutions: ['AzureActivity']
   }
 }
 
@@ -144,6 +144,7 @@ module landingZoneSubscriptionPlacement 'subscriptionPlacement/subscriptionPlace
       'd68448b0-9947-46d7-8771-baa331a3063a' //sub-visualstudio-enterprise
       'e1e5de62-3573-4b44-a52b-0f1431675929' //sub-talkwithtiles
       '957a7d34-8562-4098-bb4c-072e08386d07' //sub-finances-prd
+      'ef3cc6c2-159e-4890-9193-13673dded835' //sub-molyneux-me-dev
     ]
     parTargetManagementGroupId: managementGroups.outputs.outLandingZonesManagementGroupName
     parTelemetryOptOut: true
