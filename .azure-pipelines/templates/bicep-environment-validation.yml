@@ -34,7 +34,7 @@ jobs:
 
                 az deployment tenant validate `
                   --name "alz-platform-$($config.parameters.parEnvironment.value)-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" `
-                  --template-file bicep/platform.bicep `
+                  --template-file bicep/main.bicep `
                   --location $config.parameters.parLocation.value `
                   --parameters @params/platform.${{ parameters.environmentName }}.json
 
@@ -49,6 +49,6 @@ jobs:
                 
                 az deployment tenant what-if `
                   --name "alz-platform-$($config.parameters.parEnvironment.value)-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" `
-                  --template-file bicep/platform.bicep `
+                  --template-file bicep/main.bicep `
                   --location $config.parameters.parLocation.value `
                   --parameters @params/platform.${{ parameters.environmentName }}.json
