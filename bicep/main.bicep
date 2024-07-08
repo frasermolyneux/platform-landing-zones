@@ -145,6 +145,7 @@ module landingZoneSubscriptionPlacement 'subscriptionPlacement/subscriptionPlace
       'e1e5de62-3573-4b44-a52b-0f1431675929' //sub-talkwithtiles
       '957a7d34-8562-4098-bb4c-072e08386d07' //sub-finances-prd
       'ef3cc6c2-159e-4890-9193-13673dded835' //sub-molyneux-me-dev
+      '3cc59319-eb1e-4b52-b19e-09a49f9db2e7' //sub-molyneux-me-prd
     ]
     parTargetManagementGroupId: managementGroups.outputs.outLandingZonesManagementGroupName
     parTelemetryOptOut: true
