@@ -72,7 +72,7 @@ module logging 'logging/logging.bicep' = {
     parLogAnalyticsWorkspaceName: varLogAnalyticsWorkspaceName
     parLogAnalyticsWorkspaceLocation: parLocation
     parLogAnalyticsWorkspaceLogRetentionInDays: 30
-    parLogAnalyticsWorkspaceDailyCapInGB: '0.5'
+    parLogAnalyticsWorkspaceDailyCapInGB: '1'
     parAutomationAccountName: varAutomationAccountName
     parAutomationAccountLocation: parLocation
     parTags: parTags
