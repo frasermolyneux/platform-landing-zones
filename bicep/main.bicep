@@ -140,6 +140,7 @@ module landingZoneSubscriptionPlacement 'subscriptionPlacement/subscriptionPlace
       'd3b204ab-7c2b-47f7-8d5a-de19e85591e7' //sub-fm-geolocation-prd
       '903b6685-c12a-4703-ac54-7ec1ff15ca43' //sub-platform-strategic
       '32444f38-32f4-409f-889c-8e8aa2b5b4d1' //sub-xi-portal-prd
+      '02174fb6-b8f3-4bd7-8be8-99f271c3dc20' //sub-xi-dedi-server-prd
       '1b5b28ed-1365-4a48-b285-80f80a6aaa1b' //sub-enterprise-devtest-legacy
       'd68448b0-9947-46d7-8771-baa331a3063a' //sub-visualstudio-enterprise
       'e1e5de62-3573-4b44-a52b-0f1431675929' //sub-talkwithtiles
