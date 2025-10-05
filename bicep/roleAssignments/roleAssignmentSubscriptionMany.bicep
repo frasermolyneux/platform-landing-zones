@@ -6,10 +6,11 @@ param parSubscriptionIds array = []
 @description('Role Definition Id (i.e. GUID, Reader Role Definition ID:  acdd72a7-3385-48ef-bd42-f606fba81ae7)')
 param parRoleDefinitionId string
 
-@description('Principal type of the assignee.  Allowed values are \'Group\' (Security Group) or \'ServicePrincipal\' (Service Principal or System/User Assigned Managed Identity)')
+@description('Principal type of the assignee. Allowed values are \'Group\' (Security Group), \'ServicePrincipal\' (Service Principal or Managed Identity) or \'User\'.')
 @allowed([
   'Group'
   'ServicePrincipal'
+  'User'
 ])
 param parAssigneePrincipalType string
 

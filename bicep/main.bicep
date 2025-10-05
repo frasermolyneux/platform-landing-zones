@@ -178,8 +178,8 @@ module ownerRoleAssignments 'roleAssignments/roleAssignmentSubscriptionMany.bice
   params: {
     parSubscriptionIds: varAllSubscriptionIds
     parRoleDefinitionId: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635' // Owner
-    parAssigneePrincipalType: 'ServicePrincipal'
-    parAssigneeObjectId: 'de0ae7da-6642-464e-81ea-b32986d88579'
+    parAssigneePrincipalType: 'User'
+    parAssigneeObjectId: 'de0ae7da-6642-464e-81ea-b32986d88579' // globaladdy@molyneux.io
     parTelemetryOptOut: true
   }
 }
