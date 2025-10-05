@@ -179,7 +179,7 @@ module ownerRoleAssignments 'roleAssignments/roleAssignmentSubscriptionMany.bice
     parSubscriptionIds: varAllSubscriptionIds
     parRoleDefinitionId: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635' // Owner
     parAssigneePrincipalType: 'User'
-    parAssigneeObjectId: '2d0d844c-7298-4ba3-aa0c-b75d17eb704a'
+    parAssigneeObjectId: 'f18d451b-2b22-4708-81f7-0888cf71f525' //breakglass@molyneuxio.onmicrosoft.com
     parTelemetryOptOut: true
   }
 }
