@@ -20,14 +20,16 @@ param parAssigneeObjectId string
 @description('Set Parameter to true to Opt-out of deployment telemetry')
 param parTelemetryOptOut bool = false
 
-module modRoleAssignment 'roleAssignmentSubscription.bicep' = [for subscriptionId in parSubscriptionIds: {
-  name: 'rbac-assign-${uniqueString(subscriptionId, parAssigneeObjectId, parRoleDefinitionId)}'
-  scope: subscription(subscriptionId)
-  params: {
-    parRoleAssignmentNameGuid: guid(subscriptionId, parRoleDefinitionId, parAssigneeObjectId)
-    parAssigneeObjectId: parAssigneeObjectId
-    parAssigneePrincipalType: parAssigneePrincipalType
-    parRoleDefinitionId: parRoleDefinitionId
-    parTelemetryOptOut: parTelemetryOptOut
+module modRoleAssignment 'roleAssignmentSubscription.bicep' = [
+  for subscriptionId in parSubscriptionIds: {
+    name: 'rbac-assign-${uniqueString(subscriptionId, parAssigneeObjectId, parRoleDefinitionId)}'
+    scope: subscription(subscriptionId)
+    params: {
+      parRoleAssignmentNameGuid: guid(subscriptionId, parRoleDefinitionId, parAssigneeObjectId)
+      parAssigneeObjectId: parAssigneeObjectId
+      parAssigneePrincipalType: parAssigneePrincipalType
+      parRoleDefinitionId: parRoleDefinitionId
+      parTelemetryOptOut: parTelemetryOptOut
+    }
   }
-}]
+]
