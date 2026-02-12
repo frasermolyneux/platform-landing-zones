@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "bugfix/**"
+      - "hotfix/**"
+
+permissions: {}
+
+jobs:
+  validate-bicep:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        continue-on-error: true
+
+      - name: Install Bicep
+        run: |
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+          bicep --version
+
+      - name: Build Bicep files
+        run: |
+          echo "Building Bicep files..."
+          for file in $(find . -name "*.bicep" -not -path "*/node_modules/*"); do
+            echo "Building $file"
+            bicep build "$file"
+          done
+
+      - name: Lint Bicep files
+        run: |
+          echo "Linting Bicep files..."
+          for file in $(find . -name "*.bicep" -not -path "*/node_modules/*"); do
+            echo "Linting $file"
+            bicep lint "$file"
+          done
