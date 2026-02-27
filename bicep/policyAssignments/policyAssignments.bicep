@@ -6,9 +6,6 @@
 @maxLength(10)
 param parTopLevelManagementGroupPrefix string = 'alz'
 
-@description('Log Analytics Workspace Resource ID. - DEFAULT VALUE: Empty String ')
-param parLogAnalyticsWorkspaceResourceID string = ''
-
 @description('Set Parameter to true to Opt-out of deployment telemetry')
 param parTelemetryOptOut bool = false
 
@@ -21,7 +18,6 @@ var varDeploymentNameWrappers = {
 }
 
 var varModuleDeploymentNames = {
-  modPolicyAssignmentIntRootDeployAzActivityLog: take('${varDeploymentNameWrappers.basePrefix}-polAssi-deployAzActivityLog-intRoot-${varDeploymentNameWrappers.baseSuffixTenantAndManagementGroup}', 64)
   modPolicyAssignmentIdentDenyPublicIP: take('${varDeploymentNameWrappers.basePrefix}-polAssi-denyPublicIP-ident-${varDeploymentNameWrappers.baseSuffixTenantAndManagementGroup}', 64)
   modPolicyAssignmentLZsDenyStorageHttp: take('${varDeploymentNameWrappers.basePrefix}-polAssi-denyStorageHttp-lz-${varDeploymentNameWrappers.baseSuffixTenantAndManagementGroup}', 64)
   modPolicyAssignmentLZsEnforceTLSSSL: take('${varDeploymentNameWrappers.basePrefix}-polAssi-enforceTLSSSL-lz-${varDeploymentNameWrappers.baseSuffixTenantAndManagementGroup}', 64)
@@ -36,11 +32,6 @@ var varPolicyAssignmentDenyPublicIP = {
 var varPolicyAssignmentDenyStoragehttp = {
   definitionID: '/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9'
   libDefinition: json(loadTextContent('lib/policy_assignments/policy_assignment_es_deny_storage_http.tmpl.json'))
-}
-
-var varPolicyAssignmentDeployAzActivityLog = {
-  definitionID: '/providers/Microsoft.Authorization/policyDefinitions/2465583e-4e78-4c15-b6be-a36cbc7c8b0f'
-  libDefinition: json(loadTextContent('lib/policy_assignments/policy_assignment_es_deploy_azactivity_log.tmpl.json'))
 }
 
 var varPolicyAssignmentEnforceTLSSSL = {
@@ -74,29 +65,6 @@ var varTopLevelManagementGroupResourceID = '/providers/Microsoft.Management/mana
 targetScope = 'managementGroup'
 
 /// --- ALZ - managementGroup(varManagementGroupIDs.intRoot)
-// Deploy-AzActivity-Log
-module modPolicyAssignmentIntRootDeployAzActivityLog '../policy/assignments/policyAssignmentManagementGroup.bicep' = {
-  scope: managementGroup(varManagementGroupIDs.intRoot)
-  name: varModuleDeploymentNames.modPolicyAssignmentIntRootDeployAzActivityLog
-  params: {
-    parPolicyAssignmentDefinitionId: varPolicyAssignmentDeployAzActivityLog.definitionID
-    parPolicyAssignmentName: varPolicyAssignmentDeployAzActivityLog.libDefinition.name
-    parPolicyAssignmentDisplayName: varPolicyAssignmentDeployAzActivityLog.libDefinition.properties.displayName
-    parPolicyAssignmentDescription: varPolicyAssignmentDeployAzActivityLog.libDefinition.properties.description
-    parPolicyAssignmentParameters: varPolicyAssignmentDeployAzActivityLog.libDefinition.properties.parameters
-    parPolicyAssignmentParameterOverrides: {
-      logAnalytics: {
-        value: parLogAnalyticsWorkspaceResourceID
-      }
-    }
-    parPolicyAssignmentIdentityType: varPolicyAssignmentDeployAzActivityLog.libDefinition.identity.type
-    parPolicyAssignmentIdentityRoleDefinitionIds: [
-      varRBACRoleDefinitionIDs.owner
-    ]
-    parPolicyAssignmentEnforcementMode: varPolicyAssignmentDeployAzActivityLog.libDefinition.properties.enforcementMode
-    parTelemetryOptOut: parTelemetryOptOut
-  }
-}
 
 /// --- ALZ - Decommissioned - managementGroup(varManagementGroupIDs.decommissioned) 
 
