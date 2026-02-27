@@ -39,15 +39,7 @@ var varPolicyAssignmentEnforceTLSSSL = {
   libDefinition: json(loadTextContent('lib/policy_assignments/policy_assignment_es_enforce_tls_ssl.tmpl.json'))
 }
 
-// RBAC Role Definitions Variables - Used For Policy Assignments
-var varRBACRoleDefinitionIDs = {
-  owner: '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
-  contributor: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
-  networkContributor: '4d97b98b-1d4f-4787-a291-c67834d212e7'
-  aksContributor: 'ed7f3fbd-7b88-4dd4-9017-9adb7ce333f8'
-}
-
-// Managment Groups Varaibles - Used For Policy Assignments
+// Managment Groups Varaibles- Used For Policy Assignments
 var varManagementGroupIDs = {
   intRoot: parTopLevelManagementGroupPrefix
   platform: '${parTopLevelManagementGroupPrefix}-platform'
