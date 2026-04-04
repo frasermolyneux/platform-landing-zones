@@ -103,24 +103,4 @@ The plan should show no changes (or only expected drift) if all imports were suc
 
 ## Step 6 — Teardown Legacy Bicep Resources
 
-The original Bicep templates deployed policy definitions, policy assignments, custom roles, and logging resources that are **not** carried over to the Terraform configuration. These must be removed separately.
-
-Preview what will be removed:
-
-```powershell
-./scripts/teardown-legacy-bicep.ps1 -WhatIf
-```
-
-Execute the teardown (policy and custom roles only):
-
-```powershell
-./scripts/teardown-legacy-bicep.ps1
-```
-
-To also remove logging resources (if already migrated to `platform-monitoring`) and break-glass role assignments:
-
-```powershell
-./scripts/teardown-legacy-bicep.ps1 -IncludeLogging -IncludeRoleAssignments
-```
-
-The script removes resources in dependency order: assignments → initiatives → definitions → roles.
+The original Bicep templates deployed policy definitions, policy assignments, custom roles, and logging resources that are **not** carried over to the Terraform configuration. These were removed using a one-time teardown script after the Terraform migration was confirmed working. This step is now complete.
