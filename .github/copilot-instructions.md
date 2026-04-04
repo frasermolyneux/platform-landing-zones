@@ -2,40 +2,60 @@
 
 ## Project Overview
 
-This repository contains tenant-scoped Azure Landing Zones for the MX tenant, built with Bicep and aligned to Azure/ALZ-Bicep patterns. Deployments run at Azure tenant scope.
+This repository manages Azure Landing Zones for the MX tenant using Terraform. It is the **inception point** for the entire Azure tenant — the first project that runs before `platform-workloads` or any other infrastructure. It provisions the management group hierarchy and places subscriptions into the appropriate management groups. Deployments target the Azure tenant scope via the `azurerm` provider.
+
+Because this project predates `platform-workloads`, its Terraform state storage and deployment identity are bootstrapped manually. See [docs/bootstrap.md](docs/bootstrap.md) for the one-time setup process.
 
 ## Repository Layout
 
-- `bicep/main.bicep` — orchestrator that wires all modules together.
-- `bicep/managementGroups/` — management group hierarchy (top-level prefix `alz`; corp/online children disabled).
-- `bicep/policy/definitions/` — custom policy definitions scoped to `managementGroup('alz')`.
-- `bicep/customRoleDefinitions/` — custom role definitions scoped to `managementGroup('alz')`.
-- `bicep/policyAssignments/` — policy assignments bound to the Log Analytics workspace output.
-- `bicep/logging/` — Log Analytics (30-day retention, 1 GB/day cap), Automation Account, AzureActivity solution.
-- `bicep/subscriptionPlacement/` — assigns subscription ID arrays into platform, connectivity, identity, landing-zone, and sandbox management groups.
-- `bicep/roleAssignments/` — Owner role for a break-glass principal across all subscriptions.
-- `bicep/resourceGroup/` — resource group creation helper.
-- `params/` — parameter files; `platform.prd.json` supplies prod values (uksouth, instance 01).
-- `.azure-pipelines/` — Azure DevOps CI/CD (lint, validate, what-if, deploy).
-- `.github/workflows/` — GitHub Actions for code quality, PR verification, and dependency management.
-- `docs/` — documentation; `manual-steps.md` covers deploy principal and service connection setup.
+- `terraform/providers.tf` — Terraform and azurerm provider configuration with Azure backend.
+- `terraform/variables.tf` — Variable declarations for environment config and subscription lists.
+- `terraform/locals.tf` — Computed subscription-to-management-group placement map.
+- `terraform/management-groups.tf` — Management group hierarchy (3-level tree under root prefix `alz`).
+- `terraform/subscription-placement.tf` — `azurerm_management_group_subscription_association` resources.
+- `terraform/backends/prd.backend.hcl` — Backend state storage configuration for production.
+- `terraform/tfvars/prd.tfvars` — Production variable values including all subscription IDs.
+- `scripts/bootstrap-state-storage.ps1` — One-time script to create Terraform state storage account.
+- `scripts/bootstrap-identity.ps1` — One-time script to create deployment and plan-only service principals with OIDC federation.
+- `docs/bootstrap.md` — Step-by-step guide for the one-time tenant bootstrap process.
+- `docs/terraform-import.md` — Commands to import existing Azure resources into Terraform state.
+- `.github/workflows/` — GitHub Actions for CI/CD: terraform plan, apply, code quality, and dependency management.
 
 ## Key Conventions
 
-- Naming seed: `uniqueString('alz', parEnvironment, parInstance)`.
-- Resource naming: `rg-platform-logging-{env}-{location}-{instance}`, `log-platform-*`, `aa-platform-*`.
-- Key parameters: `parEnvironment`, `parLocation`, `parInstance`, `parLoggingSubscriptionId`, `parTags`.
-- Keep subscription ID lists in `main.bicep` current when onboarding or removing subscriptions.
+- Management group prefix: `alz` — all group names start with this prefix.
+- Resource naming follows org standard: `{resource}-{project}-{environment}-{location}-{instance}`.
+- Always set `tags = var.tags` on taggable Terraform resources.
+- Keep subscription ID lists in `terraform/tfvars/prd.tfvars` current when onboarding or removing subscriptions.
+- OIDC federation for all GitHub Actions authentication — no client secrets.
+
+## Management Group Hierarchy
+
+```
+Tenant Root Group
+└── alz (Azure Landing Zones)
+    ├── alz-platform (Platform)
+    │   ├── alz-platform-management (Management)
+    │   ├── alz-platform-connectivity (Connectivity)
+    │   └── alz-platform-identity (Identity)
+    ├── alz-landingzones (Landing Zones)
+    ├── alz-sandbox (Sandbox)
+    └── alz-decommissioned (Decommissioned)
+```
 
 ## Local Development
 
 ```shell
-az deployment tenant validate --template-file bicep/main.bicep --parameters @params/platform.prd.json --location uksouth
-az deployment tenant what-if   --template-file bicep/main.bicep --parameters @params/platform.prd.json --location uksouth
-az deployment tenant create    --template-file bicep/main.bicep --parameters @params/platform.prd.json --location uksouth
+terraform -chdir=terraform init -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
+terraform -chdir=terraform apply -var-file=tfvars/prd.tfvars
+terraform fmt -recursive
 ```
 
 ## CI/CD
 
-- **Azure DevOps**: `release-to-production.yml` triggers on main and weekly; runs lint, validate/what-if, then deploy stages.
-- **GitHub Actions**: `build-and-test.yml`, `codequality.yml`, `pr-verify.yml`, `dependabot-automerge.yml`, `copilot-setup-steps.yml`.
+- **Deploy Prd** (`deploy-prd.yml`): Triggers on main push, weekly schedule (Thursday), and manual dispatch. Runs terraform plan and apply against production.
+- **Build and Test** (`build-and-test.yml`): Terraform plan on feature/bugfix/hotfix branches.
+- **PR Verify** (`pr-verify.yml`): Terraform plan with PR comments on pull requests.
+- **Code Quality** (`codequality.yml`): SonarCloud, security scanning, and dependency review.
+- **Destroy Environment** (`destroy-environment.yml`): Manual dispatch for terraform destroy.
