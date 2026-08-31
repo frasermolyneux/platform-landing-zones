@@ -350,8 +350,5 @@ MigrationBackup/
 .ionide/
 
 # Terraform
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-
-# Shared Copilot configuration checked out during copilot-setup-steps
-.github-copilot/
+**/.terraform/
+.terraform.lock.hcl
