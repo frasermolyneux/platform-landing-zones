@@ -81,7 +81,7 @@ Generate the role assignment import blocks:
 Review `terraform/imports.tf` to confirm the generated blocks look correct, then run the first apply:
 
 ```shell
-terraform -chdir=terraform init -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -backend-config=backends/prd.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 terraform -chdir=terraform apply -var-file=tfvars/prd.tfvars
 ```
@@ -95,7 +95,7 @@ Once the import apply succeeds and all resources are in state, delete `terraform
 Run a Terraform plan locally to verify everything is wired up:
 
 ```shell
-terraform -chdir=terraform init -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -backend-config=backends/prd.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 ```
 
