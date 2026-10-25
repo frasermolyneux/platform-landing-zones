@@ -22,14 +22,14 @@ For Terraform changes:
 
 ```pwsh
 terraform -chdir=terraform fmt -check -recursive
-terraform -chdir=terraform init -backend=false -upgrade
+terraform -chdir=terraform init -backend=false -lockfile=readonly
 terraform -chdir=terraform validate
 ```
 
 Run the production state-backed plan only when Terraform behavior changes:
 
 ```pwsh
-terraform -chdir=terraform init -reconfigure -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -reconfigure -backend-config=backends/prd.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 ```
 
@@ -40,6 +40,6 @@ terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 - Do not introduce a dependency on `platform-workloads`.
 - Bootstrap identities use OIDC; never add client secrets or credentials.
 - Management-group, subscription-placement, import, and break-glass changes have tenant-wide blast radius.
-- `.terraform.lock.hcl` is local generated state, ignored, and not committed.
+- Commit each root's `.terraform-version` and `.terraform.lock.hcl`. Select the exact root CLI pin before invoking Terraform; normal initialization uses `-lockfile=readonly`. Regenerate provider selections only in a reviewed dependency-update PR; never commit state, plans, or `.terraform/`.
 
 See [README.md](README.md) and [docs/bootstrap.md](docs/bootstrap.md).

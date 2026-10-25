@@ -14,7 +14,7 @@
 
 This is a production-only tenant-scope stack. There is no `dev` environment and no `platform-workloads` remote-state dependency.
 
-Terraform requires `>= 1.15.6`; AzureRM is constrained to `~> 5.0.0` in `terraform/providers.tf`. Do not change these constraints as part of unrelated work.
+CLI compatibility and provider constraints are authoritative in `terraform/providers.tf`; exact selections come from the committed root CLI pin and provider lock. Do not change these constraints as part of unrelated work.
 
 Preserve the `alz` prefix and established hierarchy. Subscription onboarding and removal belong in `terraform/tfvars/prd.tfvars`.
 
@@ -26,14 +26,14 @@ For Terraform changes:
 
 ```pwsh
 terraform -chdir=terraform fmt -check -recursive
-terraform -chdir=terraform init -backend=false -upgrade
+terraform -chdir=terraform init -backend=false -lockfile=readonly
 terraform -chdir=terraform validate
 ```
 
 Run a state-backed plan only for infrastructure-affecting changes:
 
 ```pwsh
-terraform -chdir=terraform init -reconfigure -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -reconfigure -backend-config=backends/prd.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 ```
 
@@ -44,6 +44,6 @@ terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 - Break-glass role assignments use lifecycle protection. Follow the documented state procedure rather than forcing destruction.
 - Do not apply, import, move, or remove state unless explicitly requested.
 - Use OIDC; never add client secrets, tokens, or connection strings.
-- `.terraform.lock.hcl` is generated locally, ignored, and never committed.
+- Commit each root's `.terraform-version` and `.terraform.lock.hcl`. Select the exact root CLI pin before invoking Terraform; normal initialization uses `-lockfile=readonly`. Regenerate provider selections only in a reviewed dependency-update PR; never commit state, plans, or `.terraform/`.
 
 Follow [docs/bootstrap.md](../docs/bootstrap.md) for bootstrap, imports, and protected-resource handling.

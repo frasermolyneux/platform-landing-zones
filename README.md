@@ -31,7 +31,7 @@ Tenant Root Group
 ## Local Development
 
 ```shell
-terraform -chdir=terraform init -backend-config=backends/prd.backend.hcl
+terraform -chdir=terraform init -lockfile=readonly -backend-config=backends/prd.backend.hcl
 terraform -chdir=terraform plan -var-file=tfvars/prd.tfvars
 terraform -chdir=terraform apply -var-file=tfvars/prd.tfvars
 terraform fmt -recursive
