@@ -12,7 +12,7 @@
     Resources created:
     - Resource group: rg-tf-platform-landing-zones-prd-uksouth
     - Storage account: satflz<random> (globally unique name)
-    - Private blob containers: tfstate and tfplan
+    - Blob container: tfstate
 
     All resources are created in the sub-platform-management subscription.
     This script is idempotent - safe to run multiple times.
@@ -55,11 +55,10 @@ if ($LASTEXITCODE -ne 0) { throw "Failed to create resource group" }
 Write-Host "Resource group created." -ForegroundColor Green
 
 # Check if a storage account already exists in the resource group
-$existingAccounts = @(az storage account list `
+$existingAccounts = az storage account list `
     --resource-group $ResourceGroupName `
     --query "[].name" `
-    --output json | ConvertFrom-Json)
-if ($LASTEXITCODE -ne 0) { throw "Failed to list storage accounts" }
+    --output json 2>$null | ConvertFrom-Json
 
 if ($existingAccounts -and $existingAccounts.Count -gt 0) {
     $StorageAccountName = $existingAccounts[0]
@@ -93,19 +92,16 @@ else {
     Write-Host "Storage account created." -ForegroundColor Green
 }
 
-# Create private blob containers (idempotent - succeeds if already present)
-foreach ($name in @($ContainerName, "tfplan")) {
-    Write-Host ""
-    Write-Host "Ensuring private blob container exists: $name..." -ForegroundColor Yellow
-    az storage container create `
-        --name $name `
-        --account-name $StorageAccountName `
-        --auth-mode login `
-        --public-access off `
-        --output none
-    if ($LASTEXITCODE -ne 0) { throw "Failed to create blob container: $name" }
-    Write-Host "Blob container ready: $name." -ForegroundColor Green
-}
+# Create blob container (idempotent - succeeds if already exists)
+Write-Host ""
+Write-Host "Ensuring blob container exists: $ContainerName..." -ForegroundColor Yellow
+az storage container create `
+    --name $ContainerName `
+    --account-name $StorageAccountName `
+    --auth-mode login `
+    --output none
+if ($LASTEXITCODE -ne 0) { throw "Failed to create blob container" }
+Write-Host "Blob container ready." -ForegroundColor Green
 
 # Output summary
 Write-Host ""

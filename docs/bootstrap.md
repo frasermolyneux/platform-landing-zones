@@ -35,17 +35,18 @@ Run the bootstrap script:
 This creates:
 - Resource group: `rg-tf-platform-landing-zones-prd-uksouth`
 - Storage account: `satflz<unique>` (name output by script)
-- Private blob containers: `tfstate` for state and `tfplan` for saved plans
+- Blob container: `tfstate`
 
 **After running**, update `terraform/backends/prd.backend.hcl` with the storage account name output by the script.
 
-For an existing backend, verify the `tfplan` container is private and exists in the account named
-in `terraform/backends/prd.backend.hcl` before enabling the saved-plan actions.
+The bootstrap script does not create the private `tfplan` container required by
+the saved-plan actions. The landing-zone bootstrap operator must provision it
+separately in the account named in `terraform/backends/prd.backend.hcl`.
 Do not rerun the bootstrap script solely to add it: the script selects the first
-storage account in the resource group, which may not be the configured backend,
-and does not change an existing container's access level.
+storage account in the resource group, which may not be the configured backend.
 The deployment identity needs Storage Blob Data Contributor access to the private
-container; verify an OIDC-authenticated plan can upload successfully.
+container; the bootstrap operator must verify an OIDC-authenticated plan can upload
+successfully before enabling the saved-plan actions.
 
 Coordinate saved-plan lifecycle management with the platform storage policy owner.
 The centrally managed workload standard expires `tfplan/` block blobs, snapshots,
