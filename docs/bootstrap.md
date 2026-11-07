@@ -39,6 +39,20 @@ This creates:
 
 **After running**, update `terraform/backends/prd.backend.hcl` with the storage account name output by the script.
 
+The bootstrap script does not create the private `tfplan` container required by
+the saved-plan actions. The landing-zone bootstrap operator must provision it
+separately in the account named in `terraform/backends/prd.backend.hcl`.
+Do not rerun the bootstrap script solely to add it: the script selects the first
+storage account in the resource group, which may not be the configured backend.
+The deployment identity needs Storage Blob Data Contributor access to the private
+container; the bootstrap operator must verify an OIDC-authenticated plan can upload
+successfully before enabling the saved-plan actions.
+
+Coordinate saved-plan lifecycle management with the platform storage policy owner.
+The centrally managed workload standard expires `tfplan/` block blobs, snapshots,
+and versions after 30 days; ensure any separately managed policy targets `tfplan/`
+only and does not affect `tfstate`.
+
 ## Step 2 — Create Deployment Identity
 
 The deployment identity is an Azure AD application with a service principal that has permissions to manage management groups at the tenant root scope. It uses OIDC federation with GitHub Actions (no client secrets).
